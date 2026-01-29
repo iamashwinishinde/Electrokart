@@ -1,4 +1,4 @@
-# Electrokart
+<img width="1914" height="1028" alt="image" src="https://github.com/user-attachments/assets/0cabef37-62fa-4f2b-835d-222875a5acb3" /># Electrokart
 
 Electrokart — a web app for browsing electronics (project repository).
 Live demo: https://electro-kart-psi.vercel.app/
@@ -101,8 +101,28 @@ If you use Vercel for deployments, ensure your build settings, environment varia
 - Create pull requests against the main branch.
 - Add clear descriptions and test steps for any change.
 
-## License
-Specify your license here (e.g., MIT). Replace this text with your chosen license.
+## Preview 
+
+<img width="1914" height="1028" alt="image" src="https://github.com/user-attachments/assets/5caf3da7-7355-4b65-aeff-63c1a505f1e4" />
+
+
+<img width="1919" height="978" alt="image" src="https://github.com/user-attachments/assets/3a6e1c80-8305-439b-88e6-182cd9c89ed0" />
+
+<img width="1918" height="976" alt="image" src="https://github.com/user-attachments/assets/87f96459-3b19-47be-844f-da21a3831972" />
+
+<img width="1919" height="978" alt="image" src="https://github.com/user-attachments/assets/5b3577e3-42ae-4b79-8e10-228f42ecaeec" />
+
+
+
+
+
+<img width="1919" height="979" alt="image" src="https://github.com/user-attachments/assets/ecfa308f-5fa0-4375-8186-963d396033f5" />
+
+
+<img width="1918" height="976" alt="image" src="https://github.com/user-attachments/assets/855327b2-e4d7-4bd2-8a91-d0122a47091e" />
+
+
+
 
 ## Contact
 Repository owner: iamashwinishinde
