@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>My Wishlist</title>
+  <link href="style.css" rel="stylesheet">
+  <link rel="stylesheet" href="wishlist.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+  <nav>
+     <div class="outer-nav" id="outer"> 
+      <div class="logo" id="logo">
+        <img src="images/logo.png" alt="logo">
+      </div>
+      <input type="text" placeholder="Search Products..."  class="search-bar">
+      <i class="fa-duotone fa-solid fa-magnifying-glass" id="search-icon"></i>
+     </div>
+  </nav>
+
+  <nav class="nav2"> 
+    <div class="card-linking">
+      <a href="index.html"> Home </a>
+      <a href="#laptops" class="nav-link">Laptops </a>
+      <a href="#smartphones" class="nav-link">Mobile & Accessories </a>
+      <a href="#televisions" class="nav-link">TV & Home Entertainment </a>
+      <a href="#cameras" class="nav-link">Cameras </a>
+      <a href="#headphones" class="nav-link">Headphones</a>
+      <a href="wishlist.html" class="nav-link">Wishlist</a>
+      <a href="cart.html" class="nav-link">Cart</a>
+      <a href="orders.html">Orders</a>
+      <a href="login.html" class="nav-link"><i class="fa-solid fa-user"></i></a>
+    </div>
+  </nav>
+
+  <div class="wishlist-container">
+    <h1 class="wishlist-title">My Wishlist</h1>
+    <div class="wishlist-items" id="wishlist-items">
+      <!-- Items will be loaded here by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const wishlist = JSON.parse(localStorage.getItem('wishlist')) || [];
+      const wishlistContainer = document.getElementById('wishlist-items');
+      
+      if (wishlist.length === 0) {
+        wishlistContainer.innerHTML = `
+          <div class="empty-wishlist">
+            <i class=" far fa-heart"></i>
+            <h2>Your wishlist is empty</h2>
+            <p>You haven't added any items to your wishlist yet.</p>
+            <a href="index.html" class="continue-shopping">Continue Shopping</a>
+          </div>
+        `;
+        return;
+      }
+      
+      wishlist.forEach((item, index) => {
+        const wishlistItem = document.createElement('div');
+        wishlistItem.className = 'wishlist-item';
+        wishlistItem.innerHTML = `
+          <div class="wishlist-item-image">
+            <img src="${item.image}" alt="${item.name}">
+          </div>
+          <div class="wishlist-item-details">
+            <h3>${item.name}</h3>
+            <p class="wishlist-category">${item.category}</p>
+            <p class="wishlist-price">${item.price}</p>
+            <div class="wishlist-actions">
+              <button class="buy">Buy Now</button>
+              <button class="cart">Add to Cart</button>
+              <button class="remove" data-index="${index}">Remove</button>
+            </div>
+          </div>
+        `;
+        wishlistContainer.appendChild(wishlistItem);
+      });
+      
+      // Add event listeners for remove buttons
+      document.querySelectorAll('.remove').forEach(button => {
+        button.addEventListener('click', function() {
+          const index = parseInt(this.getAttribute('data-index'));
+          wishlist.splice(index, 1);
+          localStorage.setItem('wishlist', JSON.stringify(wishlist));
+          location.reload(); // Refresh to show updated wishlist
+        });
+      });
+    });
+  </script>
+</body>
+</html>

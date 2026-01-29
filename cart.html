@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Your Cart</title>
+  <link href="style.css" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+</head>
+
+<body>
+  <nav>
+     <div class="outer-nav" id="outer"> 
+      <div class="logo" id="logo">
+        <img src="images/logo.png" alt="logo">
+      </div>
+      <input type="text" placeholder="Search Products..."  class="search-bar">
+      <i class="fa-duotone fa-solid fa-magnifying-glass" id="search-icon"></i>
+     </div>
+  </nav>
+
+  <nav class="nav2"> 
+    <div class="card-linking">
+      <a href="index.html"> Home </a>
+      <a href="#laptops" class="nav-link">Laptops </a>
+      <a href="#smartphones" class="nav-link">Mobile & Accessories </a>
+      <a href="#televisions" class="nav-link">TV & Home Entertainment </a>
+      <a href="#Cameras" class="nav-link">Cameras </a>
+      <a href="#headphones" class="nav-link">Headphones</a>
+      <a href="wishlist.html" class="nav-link">Wishlist</a>
+      <a href="cart.html" class="nav-link">Cart <span id="cart-count"></span></a>
+      <a href="orders.html">Orders</a>
+      <a href="login.html" class="nav-link">Login/Sign-up &nbsp;<i class="fa-solid fa-user"></i></a>
+    </div>
+  </nav>
+
+  <div class="cart-container">
+    <h1 class="cart-heading">Your Shopping Cart</h1>
+    
+    <div class="cart-content">
+      <div class="cart-items" id="cart-items">
+        
+      </div>
+      
+      <div class="cart-summary">
+        <h2>Order Summary</h2>
+        <div class="summary-details">
+          <div class="summary-row">
+            <span>Subtotal (<span id="item-count">0</span> items):</span>
+            <span id="subtotal">₹0</span>
+          </div>
+          <div class="summary-row">
+            <span>Shipping:</span>
+            <span id="shipping">FREE</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total:</span>
+            <span id="total">₹0</span>
+          </div>
+        </div>
+        <button class="checkout-btn">Proceed to Checkout</button>
+        <button class="continue-shopping" onclick="window.location.href='index.html'">Continue Shopping</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+    
+      let cart = JSON.parse(localStorage.getItem('cart')) || [];
+      const cartItemsContainer = document.getElementById('cart-items');
+      const subtotalElement = document.getElementById('subtotal');
+      const totalElement = document.getElementById('total');
+      const itemCountElement = document.getElementById('item-count');
+      const cartCountElement = document.getElementById('cart-count');
+      
+     
+      function updateCartCount() {
+        const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
+        cartCountElement.textContent = totalItems > 0 ? `(${totalItems})` : '';
+      }
+      
+      function displayCartItems() {
+        cartItemsContainer.innerHTML = '';
+        
+        if (cart.length === 0) {
+          cartItemsContainer.innerHTML = `
+            <div class="empty-cart">
+              <i class="fas fa-shopping-cart"></i>
+              <h3>Your cart is empty</h3>
+              <p>Looks like you haven't added anything to your cart yet</p>
+            </div>
+          `;
+          subtotalElement.textContent = '₹0';
+          totalElement.textContent = '₹0';
+          itemCountElement.textContent = '0';
+          return;
+        }
+        
+        let subtotal = 0;
+        let totalItems = 0;
+        
+        cart.forEach((item, index) => {
+          const price = parseFloat(item.price.replace(/[^0-9.]/g, ''));
+          const itemTotal = price * item.quantity;
+          subtotal += itemTotal;
+          totalItems += item.quantity;
+          
+          const cartItem = document.createElement('div');
+          cartItem.className = 'cart-item';
+          cartItem.innerHTML = `
+            <div class="cart-item-image">
+              <img src="${item.image}" alt="${item.name}">
+            </div>
+            <div class="cart-item-details">
+              <h3>${item.name}</h3>
+              <p class="category">${item.category}</p>
+              <p class="price">${item.price}</p>
+              <div class="quantity-controls">
+                <button class="quantity-btn minus" data-index="${index}">-</button>
+                <span class="quantity">${item.quantity}</span>
+                <button class="quantity-btn plus" data-index="${index}">+</button>
+              </div>
+            </div>
+            <div class="cart-item-actions">
+              <button class="remove-btn" data-index="${index}"><i class="fas fa-trash"></i></button>
+              <p class="item-total">₹${itemTotal.toFixed(2)}</p>
+            </div>
+          `;
+          
+          cartItemsContainer.appendChild(cartItem);
+        });
+          
+        itemCountElement.textContent = totalItems;
+        subtotalElement.textContent = `₹${subtotal.toFixed(2)}`;
+        totalElement.textContent = `₹${subtotal.toFixed(2)}`;
+      }
+      
+     
+      displayCartItems();
+      updateCartCount();
+      
+    
+      cartItemsContainer.addEventListener('click', function(e) {
+        const target = e.target.closest('.quantity-btn') || e.target.closest('.remove-btn');
+        if (!target) return;
+        
+        const index = target.dataset.index;
+        
+        if (target.classList.contains('minus')) {
+          if (cart[index].quantity > 1) {
+            cart[index].quantity--;
+          } else {
+            cart.splice(index, 1);
+          }
+        } else if (target.classList.contains('plus')) {
+          cart[index].quantity++;
+        } else if (target.classList.contains('remove-btn')) {
+          cart.splice(index, 1);
+        }
+        
+       
+        localStorage.setItem('cart', JSON.stringify(cart));
+        displayCartItems();
+        updateCartCount();
+      });
+      
+    
+      document.querySelector('.checkout-btn').addEventListener('click', function() {
+        if (cart.length === 0) {
+          alert('Your cart is empty. Please add items before checkout.');
+          return;
+        }
+        window.location.href = 'checkout.html';
+      });
+    });
+  </script>
+
+  <style>
+    .cart-container {
+      max-width: 1200px;
+      margin: 30px auto;
+      padding: 0 20px;
+      color: white;
+    }
+    
+    .cart-heading {
+      font-size: 28px;
+      margin-bottom: 30px;
+      text-align: center;
+      color: #FFD814;
+      font-weight: bold;
+    }
+    
+    .cart-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 30px;
+    }
+    
+    .cart-items {
+      flex: 1;
+      min-width: 300px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    
+    .cart-summary {
+      width: 300px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 20px;
+    }
+    
+    .cart-summary h2 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      color: #FFD814;
+    }
+    
+    .summary-details {
+      margin-bottom: 20px;
+    }
+    
+    .summary-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    }
+    
+    .summary-row.total {
+      font-weight: bold;
+      font-size: 18px;
+      border-bottom: none;
+    }
+    
+    .checkout-btn, .continue-shopping {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .checkout-btn {
+      background-color: #FFD814;
+      color: #111;
+    }
+    
+    .checkout-btn:hover {
+      background-color: #f1c40f;
+    }
+    
+    .continue-shopping {
+      background-color: transparent;
+      color: #FFD814;
+      border: 1px solid #FFD814;
+    }
+    
+    .continue-shopping:hover {
+      background-color:  #FFD814;
+      color:white;
+    
+    .cart-item {
+      display: flex;
+      gap: 15px;
+      padding: 15px 0;
+      border-bottom: 1px solid rgba(247, 246, 246, 0.986);
+    }
+    
+    .cart-item:last-child {
+      border-bottom: none;
+    }
+    
+    .cart-item-image img {
+      width: 80px;
+      height: 80px;
+      object-fit: contain;
+      background-color: white;
+      border-radius: 5px;
+    }
+    
+    .cart-item-details {
+      flex: 1;
+    }
+    
+    .cart-item-details h3 {
+      font-size: 16px;
+      margin-bottom: 5px;
+    }
+    
+    .cart-item-details .category {
+      font-size: 12px;
+      color: #aaa;
+      margin-bottom: 5px;
+    }
+    
+    .cart-item-details .price {
+      font-weight: bold;
+      color: #FFD814;
+      margin-bottom: 10px;
+    }
+    
+    .quantity-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    .quantity-btn {
+      width: 25px;
+      height: 25px;
+      background-color: rgb(255, 255, 255);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .quantity-btn:hover {
+      background-color: rgba(255, 255, 255, 0.2);
+    }
+    
+    .cart-item-actions {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+    
+    .remove-btn {
+      background: none;
+      border: none;
+      color: #ff6b6b;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    
+    .item-total {
+      font-weight: bold;
+    }
+    
+    .empty-cart {
+      text-align: center;
+      padding: 40px 0;
+    }
+    
+    .empty-cart i {
+      font-size: 50px;
+      color: #aaa;
+      margin-bottom: 20px;
+    }
+    
+    .empty-cart h3 {
+      font-size: 20px;
+      margin-bottom: 10px;
+    }
+    
+    .empty-cart p {
+      color: #aaa;
+    }
+    
+    @media (max-width: 768px) {
+      .cart-content {
+        flex-direction: column;
+      }
+      
+      .cart-summary {
+        width: 100%;
+      }
+    }
+  </style>
+</body>
+</html>
